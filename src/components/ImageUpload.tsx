@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { heicToJpgCloudConvert, uploadAboutImage } from "@/lib/cloudconvert-api";
+import { convertAndUploadToSupabase } from "@/lib/cloudconvert-api";
 
 type ImageUploadProps = {
   currentImage?: string;
@@ -22,13 +22,13 @@ export default function ImageUpload({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    let fileToUpload = file;
+    let processedFile = file;
     if (onBeforeUpload) {
-      fileToUpload = await onBeforeUpload(file);
+      processedFile = await onBeforeUpload(file);
     }
 
-    // ⬇️ Upload to Supabase
-    const url = await uploadAboutImage(fileToUpload, storagePath);
+    // ⬇️ Convert HEIC if needed and upload to Supabase
+    const url = await convertAndUploadToSupabase(processedFile, storagePath);
     onImageUpload(url);
   };
 
